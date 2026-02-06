@@ -1,6 +1,6 @@
-# IndigoLabsAssignment
+Ôªø# IndigoLabsAssignment
 
-This is a .NET 10 (10.0.100) Web API that reads a temperature measurements file, aggregates statistics per city, and exposes them via HTTP endpoints. The API is served on `https://localhost:7160` and includes a Swagger UI for easy exploration.
+This is a .NET 10 (10.0.100) Web API that reads a temperature measurements file, aggregates statistics per city, and exposes them via HTTP endpoints. The API is served on `http://localhost:5194/` and `https://localhost:7160` and includes a Swagger UI for easy exploration.
 
 ## Prerequisites
 
@@ -58,7 +58,7 @@ Lancing;-40.9
 Bassian;68.9
 Soanierana;34.0
 Gelemso;73.8
-«atalca;22.0
+√áatalca;22.0
 Winslow;-56.0
 New Glasgow;61.9
 Cajabamba;51.4
@@ -67,10 +67,10 @@ Malar;-45.1
 Rostraver;-54.3
 Cajati;1.4
 Lubbock;55.2
-Sindhn?r;-9.8
-VÛlos;92.5
-⁄jfehÈrtÛ;-95.1
-Al Jab?yish;30.2
+Sindhn≈´r;-9.8
+V√≥los;92.5
+√öjfeh√©rt√≥;-95.1
+Al JabƒÅyish;30.2
 Petawawa;8.1
 Ampasimpotsy-Gara;-43.9
 ```
@@ -101,8 +101,11 @@ From the repo root (where the `.csproj` lives):
 dotnet run
 ```
 
+It is however easier to run the app through Visal Studio IDE.
+
 By default the API will start on:
 
+- `http://localhost:5194/`
 - `https://localhost:7160`
 
 You should see console output indicating that the server is listening on that URL.
@@ -112,6 +115,7 @@ You should see console output indicating that the server is listening on that UR
 The project exposes Swagger/OpenAPI when running in Development.
 
 - Open a browser and go to:
+  - `http://localhost:5194/swagger`
   - `https://localhost:7160/swagger`
 
 You will see the API documentation and available routes.
@@ -131,11 +135,26 @@ If you do not set the header (or use a wrong key), you will receive `401 Unautho
 If you leave the default key (`super-secret-key-change-me`), the middleware will return an error
 indicating that you must configure a real key.
 
+### Enabling HTTPS (optional)
+
+If `https://localhost:7160` does not load due to certificate issues, you may need to trust the .NET HTTPS development certificate:
+
+```bash
+dotnet dev-certs https --trust
+```
+
+After trusting the certificate, restart the app using https launch profile.
+
+```bash
+dotnet run --launch-profile https
+```
+
 ## Using Postman (optional)
 
 You can also call the API directly from Postman or any HTTP client.
 
 - Base URL:
+  - `http://localhost:5194/`
   - `https://localhost:7160`
 - Add a header to every request:
   - `X-Api-Key: <your key from .env>`
@@ -146,8 +165,8 @@ return city temperature statistics).
 ## Quick Summary
 
 1. Clone the repo.
-2. Rename `.env.example` ? `.env`.
+2. Rename `.env.example` ‚Üí `.env`.
 3. Set `FileSettings__Path` to your `measurements.txt` file (with the sample content above or your own).
 4. Set `ApiKeyAuth__Key` to a non-default secret.
 5. Run with `dotnet run`.
-6. Visit `https://localhost:7160/swagger`, click **Authorize**, paste your API key, and call the routes.
+6. Visit `http://localhost:5194/swagger` or `https://localhost:7160/swagger`, click **Authorize**, paste your API key, and call the routes.

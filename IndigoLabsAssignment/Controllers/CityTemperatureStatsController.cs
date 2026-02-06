@@ -1,8 +1,8 @@
 using IndigoLabsAssignment.Models;
+using IndigoLabsAssignment.Services.Interfaces;
 using IndigoLabsAssignment.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using IndigoLabsAssignment.Services.Interfaces;
 
 namespace IndigoLabsAssignment.Controllers
 {
@@ -10,8 +10,9 @@ namespace IndigoLabsAssignment.Controllers
     [Route("[controller]")]
     public class CityTemperatureStatsController(ICityTemperatureStatsService fileService, IOptions<FileSettings> fileSettings) : ControllerBase
     {
-        private readonly string _filePath = fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
         private readonly ICityTemperatureStatsService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+
+        private readonly string _filePath = fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
 
         /// <summary>
         /// Retrieves city temperature statistics with optional filtering and sorting.

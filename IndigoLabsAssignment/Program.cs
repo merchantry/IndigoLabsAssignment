@@ -81,6 +81,13 @@ app.Use(async (context, next) =>
     var config = context.RequestServices.GetRequiredService<IConfiguration>();
     var expectedKey = config["ApiKeyAuth:Key"];
 
+    if (string.Equals(expectedKey, "super-secret-key-change-me", StringComparison.Ordinal))
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsync("API key is not configured. Please set a valid key in configuration or environment variables.");
+        return;
+    }
+
     if (string.IsNullOrEmpty(expectedKey) || !string.Equals(providedKey, expectedKey, StringComparison.Ordinal))
     {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;

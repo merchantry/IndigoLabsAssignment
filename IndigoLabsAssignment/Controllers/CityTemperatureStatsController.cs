@@ -8,11 +8,16 @@ namespace IndigoLabsAssignment.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CityTemperatureStatsController(ICityTemperatureStatsService fileService, IOptions<FileSettings> fileSettings) : ControllerBase
+    public class CityTemperatureStatsController(
+        ICityTemperatureStatsService fileService,
+        IOptions<FileSettings> fileSettings
+    ) : ControllerBase
     {
-        private readonly ICityTemperatureStatsService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+        private readonly ICityTemperatureStatsService _fileService =
+            fileService ?? throw new ArgumentNullException(nameof(fileService));
 
-        private readonly string _filePath = fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
+        private readonly string _filePath =
+            fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
 
         /// <summary>
         /// Retrieves city temperature statistics with optional filtering and sorting.
@@ -23,7 +28,12 @@ namespace IndigoLabsAssignment.Controllers
         /// <param name="sortOrder">Sort direction: "asc" or "desc" (optional)</param>
         /// <returns>Filtered and sorted city statistics</returns>
         [HttpGet]
-        public async Task<ActionResult<object>> Get([FromQuery] double? min, [FromQuery] double? max, [FromQuery] string? sortBy, [FromQuery] string? sortOrder)
+        public async Task<ActionResult<object>> Get(
+            [FromQuery] double? min,
+            [FromQuery] double? max,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? sortOrder
+        )
         {
             bool hasSortBy = !string.IsNullOrEmpty(sortBy);
             bool hasSortOrder = !string.IsNullOrEmpty(sortOrder);
@@ -33,12 +43,22 @@ namespace IndigoLabsAssignment.Controllers
 
             if (hasSortBy && !EnumUtils.ToEnum(sortBy, out sortByEnum))
             {
-                return BadRequest(new { Message = $"Invalid sortBy value: {sortBy}. Value must be either avgTemp or city" });
+                return BadRequest(
+                    new
+                    {
+                        Message = $"Invalid sortBy value: {sortBy}. Value must be either avgTemp or city",
+                    }
+                );
             }
 
             if (hasSortOrder && !EnumUtils.ToEnum(sortOrder, out sortOrderEnum))
             {
-                return BadRequest(new { Message = $"Invalid sortOrder value: {sortOrder}. Value must be either asc or desc" });
+                return BadRequest(
+                    new
+                    {
+                        Message = $"Invalid sortOrder value: {sortOrder}. Value must be either asc or desc",
+                    }
+                );
             }
 
             var stats = await _fileService.QueryCityStatsAsync(
@@ -49,7 +69,19 @@ namespace IndigoLabsAssignment.Controllers
                 hasSortOrder ? sortOrderEnum : null
             );
 
-            return Ok(new { Filter = new { min, max, sortBy, sortOrder }, Results = stats });
+            return Ok(
+                new
+                {
+                    Filter = new
+                    {
+                        min,
+                        max,
+                        sortBy,
+                        sortOrder,
+                    },
+                    Results = stats,
+                }
+            );
         }
 
         /// <summary>

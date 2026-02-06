@@ -3,12 +3,12 @@ namespace IndigoLabsAssignment.Models
     public enum SortBy
     {
         City,
-        AvgTemp
+        AvgTemp,
     }
 
     public enum SortOrder
     {
         Asc,
-        Desc
+        Desc,
     }
 }

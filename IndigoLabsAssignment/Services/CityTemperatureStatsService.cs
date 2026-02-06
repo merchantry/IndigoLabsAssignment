@@ -5,12 +5,21 @@ using IndigoLabsAssignment.Utilities;
 
 namespace IndigoLabsAssignment.Services
 {
-    public class CityTemperatureStatsService(ILineParser lineParser, IFileReaderService fileReader, ICityAggregateCacheService cacheService, IFileMetaDataService fileMetaDataService) : ICityTemperatureStatsService
+    public class CityTemperatureStatsService(
+        ILineParser lineParser,
+        IFileReaderService fileReader,
+        ICityAggregateCacheService cacheService,
+        IFileMetaDataService fileMetaDataService
+    ) : ICityTemperatureStatsService
     {
-        private readonly ILineParser _lineParser = lineParser ?? throw new ArgumentNullException(nameof(lineParser));
-        private readonly IFileReaderService _fileReader = fileReader ?? throw new ArgumentNullException(nameof(fileReader));
-        private readonly ICityAggregateCacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
-        private readonly IFileMetaDataService _fileMetaDataService = fileMetaDataService ?? throw new ArgumentNullException(nameof(fileMetaDataService));
+        private readonly ILineParser _lineParser =
+            lineParser ?? throw new ArgumentNullException(nameof(lineParser));
+        private readonly IFileReaderService _fileReader =
+            fileReader ?? throw new ArgumentNullException(nameof(fileReader));
+        private readonly ICityAggregateCacheService _cacheService =
+            cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+        private readonly IFileMetaDataService _fileMetaDataService =
+            fileMetaDataService ?? throw new ArgumentNullException(nameof(fileMetaDataService));
 
         public async Task<CityTemperatureStats?> GetSingleCityStatsAsync(string path, string city)
         {
@@ -22,34 +31,55 @@ namespace IndigoLabsAssignment.Services
             return new CityTemperatureStats(city, agg.Min, agg.Max, agg.Sum, agg.Count);
         }
 
-        public async Task<IEnumerable<CityTemperatureStats>> QueryCityStatsAsync(string path, double? minAvgTemp, double? maxAvgTemp, SortBy? sortBy = null, SortOrder? sortOrder = null)
+        public async Task<IEnumerable<CityTemperatureStats>> QueryCityStatsAsync(
+            string path,
+            double? minAvgTemp,
+            double? maxAvgTemp,
+            SortBy? sortBy = null,
+            SortOrder? sortOrder = null
+        )
         {
             var allCityStats = await GetCityAggregatesEnumarableAsync(path);
 
-            if (minAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp > minAvgTemp.Value);
-            if (maxAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp < maxAvgTemp.Value);
+            if (minAvgTemp.HasValue)
+                allCityStats = allCityStats.Where(c => c.AvgTemp > minAvgTemp.Value);
+            if (maxAvgTemp.HasValue)
+                allCityStats = allCityStats.Where(c => c.AvgTemp < maxAvgTemp.Value);
             if (sortBy.HasValue && sortOrder.HasValue)
             {
                 allCityStats = EnumerableUtils.ApplySort<CityTemperatureStats, object>(
                     allCityStats,
                     sortOrder.Value,
-                    c => sortBy.Value switch
-                    {
-                        SortBy.City => c.City,
-                        SortBy.AvgTemp => c.AvgTemp,
-                        _ => throw new ArgumentOutOfRangeException(nameof(sortBy), sortBy, "Invalid SortBy value")
-                    }
+                    c =>
+                        sortBy.Value switch
+                        {
+                            SortBy.City => c.City,
+                            SortBy.AvgTemp => c.AvgTemp,
+                            _ => throw new ArgumentOutOfRangeException(
+                                nameof(sortBy),
+                                sortBy,
+                                "Invalid SortBy value"
+                            ),
+                        }
                 );
             }
 
             return allCityStats;
         }
 
-        private async Task<IEnumerable<CityTemperatureStats>> GetCityAggregatesEnumarableAsync(string path)
+        private async Task<IEnumerable<CityTemperatureStats>> GetCityAggregatesEnumarableAsync(
+            string path
+        )
         {
             var dict = await GetCityAggregatesAsync(path);
 
-            return dict.Select(KvPair => new CityTemperatureStats(KvPair.Key, KvPair.Value.Min, KvPair.Value.Max, KvPair.Value.Sum, KvPair.Value.Count));
+            return dict.Select(KvPair => new CityTemperatureStats(
+                KvPair.Key,
+                KvPair.Value.Min,
+                KvPair.Value.Max,
+                KvPair.Value.Sum,
+                KvPair.Value.Count
+            ));
         }
 
         private async Task<Dictionary<string, CityAggregate>> GetCityAggregatesAsync(string path)
@@ -66,7 +96,9 @@ namespace IndigoLabsAssignment.Services
             return cityAggregates;
         }
 
-        private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(string path)
+        private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(
+            string path
+        )
         {
             var dict = new Dictionary<string, CityAggregate>(StringComparer.OrdinalIgnoreCase);
 

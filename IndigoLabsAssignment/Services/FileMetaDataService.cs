@@ -19,7 +19,7 @@ namespace IndigoLabsAssignment.Services
             {
                 Path = info.FullName,
                 Size = info.Length,
-                LastWriteTimeUtc = info.LastWriteTimeUtc
+                LastWriteTimeUtc = info.LastWriteTimeUtc,
             };
         }
     }

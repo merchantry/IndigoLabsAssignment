@@ -5,7 +5,8 @@ namespace IndigoLabsAssignment.Services.Cache
 {
     internal class CacheService(IMemoryCache cache) : ICacheService
     {
-        private readonly IMemoryCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        private readonly IMemoryCache _cache =
+            cache ?? throw new ArgumentNullException(nameof(cache));
 
         public bool Exists(string key)
         {

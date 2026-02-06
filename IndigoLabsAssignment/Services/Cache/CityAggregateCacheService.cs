@@ -6,7 +6,8 @@ namespace IndigoLabsAssignment.Services.Cache
 {
     public class CityAggregateCacheService(ICacheService cacheService) : ICityAggregateCacheService
     {
-        private readonly ICacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+        private readonly ICacheService _cacheService =
+            cacheService ?? throw new ArgumentNullException(nameof(cacheService));
 
         private readonly string _key = AppConstants.CityAggregatesCacheKey;
 
@@ -48,14 +49,9 @@ namespace IndigoLabsAssignment.Services.Cache
         {
             _cacheService.Set(
                 _key,
-                new CacheEntry
-                {
-                    FileMetaData = fileMetaData,
-                    Data = value
-                },
+                new CacheEntry { FileMetaData = fileMetaData, Data = value },
                 AppConstants.CityAggregatesCacheDuration
             );
         }
-
     }
 }

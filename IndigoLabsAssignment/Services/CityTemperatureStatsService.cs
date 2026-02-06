@@ -24,7 +24,7 @@ namespace IndigoLabsAssignment.Services
 
         public async Task<IEnumerable<CityTemperatureStats>> QueryCityStatsAsync(string path, double? minAvgTemp, double? maxAvgTemp, SortBy? sortBy = null, SortOrder? sortOrder = null)
         {
-            var allCityStats = await ComputeAllCityStatsAsync(path);
+            var allCityStats = await GetCityAggregatesEnumarableAsync(path);
 
             if (minAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp > minAvgTemp.Value);
             if (maxAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp < maxAvgTemp.Value);
@@ -46,7 +46,7 @@ namespace IndigoLabsAssignment.Services
             return allCityStats;
         }
 
-        private async Task<IEnumerable<CityTemperatureStats>> ComputeAllCityStatsAsync(string path)
+        private async Task<IEnumerable<CityTemperatureStats>> GetCityAggregatesEnumarableAsync(string path)
         {
             var dict = await GetCityAggregatesAsync(path);
 

@@ -48,6 +48,7 @@ namespace IndigoLabsAssignment.Controllers
                 hasSortBy ? sortByEnum : null,
                 hasSortOrder ? sortOrderEnum : null
             );
+
             return Ok(new { Filter = new { min, max, sortBy, sortOrder }, Results = stats });
         }
 

@@ -14,8 +14,8 @@ namespace IndigoLabsAssignment.Services
 
         public async Task<CityTemperatureStats?> GetSingleCityStatsAsync(string path, string city)
         {
-
             var dict = await GetCityAggregatesAsync(path);
+
             if (!dict.TryGetValue(city, out var agg))
                 return null;
 
@@ -30,7 +30,6 @@ namespace IndigoLabsAssignment.Services
             if (maxAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp < maxAvgTemp.Value);
             if (sortBy.HasValue && sortOrder.HasValue)
             {
-
                 allCityStats = EnumerableUtils.ApplySort<CityTemperatureStats, object>(
                     allCityStats,
                     sortOrder.Value,
@@ -55,7 +54,6 @@ namespace IndigoLabsAssignment.Services
 
         private async Task<Dictionary<string, CityAggregate>> GetCityAggregatesAsync(string path)
         {
-
             var fileMetaData = _fileMetaDataService.FromPath(path);
 
             if (!_cacheService.ShouldRefresh(fileMetaData))
@@ -70,7 +68,6 @@ namespace IndigoLabsAssignment.Services
 
         private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(string path)
         {
-
             var dict = new Dictionary<string, CityAggregate>(StringComparer.OrdinalIgnoreCase);
 
             await foreach (var line in _fileReader.ReadLinesAsync(path))

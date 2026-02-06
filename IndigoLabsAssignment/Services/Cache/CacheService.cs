@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Caching.Memory;
 using IndigoLabsAssignment.Services.Cache.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace IndigoLabsAssignment.Services.Cache
 {
@@ -15,10 +15,9 @@ namespace IndigoLabsAssignment.Services.Cache
         public void Set<T>(string key, T value, TimeSpan? absoluteExpirationRelativeToNow = null)
         {
             var options = new MemoryCacheEntryOptions();
+
             if (absoluteExpirationRelativeToNow.HasValue)
-            {
                 options.AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow;
-            }
 
             _cache.Set(key, value, options);
         }

@@ -12,19 +12,19 @@ namespace IndigoLabsAssignment.Services
         private readonly ICityAggregateCacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         private readonly IFileMetaDataService _fileMetaDataService = fileMetaDataService ?? throw new ArgumentNullException(nameof(fileMetaDataService));
 
-        public async Task<CityTemperatureStats?> ComputeCityStatisticsAsync(string path, string city)
+        public async Task<CityTemperatureStats?> GetSingleCityStatsAsync(string path, string city)
         {
 
-            var dict = await AggregatePerCityAsync(path);
+            var dict = await ComputeCityAggregatesAsync(path);
             if (!dict.TryGetValue(city, out var agg))
                 return null;
 
             return new CityTemperatureStats(city, agg.Min, agg.Max, agg.Sum, agg.Count);
         }
 
-        public async Task<IEnumerable<CityTemperatureStats>> ComputeCitiesByAverageAsync(string path, double? minAvgTemp, double? maxAvgTemp, SortBy? sortBy = null, SortOrder? sortOrder = null)
+        public async Task<IEnumerable<CityTemperatureStats>> QueryCityStatsAsync(string path, double? minAvgTemp, double? maxAvgTemp, SortBy? sortBy = null, SortOrder? sortOrder = null)
         {
-            var allCityStats = await ComputeAllCityStatisticsAsync(path);
+            var allCityStats = await ComputeAllCityStatsAsync(path);
 
             if (minAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp > minAvgTemp.Value);
             if (maxAvgTemp.HasValue) allCityStats = allCityStats.Where(c => c.AvgTemp < maxAvgTemp.Value);
@@ -46,14 +46,14 @@ namespace IndigoLabsAssignment.Services
             return allCityStats;
         }
 
-        private async Task<IEnumerable<CityTemperatureStats>> ComputeAllCityStatisticsAsync(string path)
+        private async Task<IEnumerable<CityTemperatureStats>> ComputeAllCityStatsAsync(string path)
         {
-            var dict = await AggregatePerCityAsync(path);
+            var dict = await ComputeCityAggregatesAsync(path);
 
             return dict.Select(KvPair => new CityTemperatureStats(KvPair.Key, KvPair.Value.Min, KvPair.Value.Max, KvPair.Value.Sum, KvPair.Value.Count));
         }
 
-        private async Task<Dictionary<string, CityAggregate>> AggregatePerCityAsync(string path)
+        private async Task<Dictionary<string, CityAggregate>> ComputeCityAggregatesAsync(string path)
         {
 
             var fileMetaData = _fileMetaDataService.FromPath(path);

@@ -40,7 +40,7 @@ namespace IndigoLabsAssignment.Controllers
                 return BadRequest(new { Message = $"Invalid sortOrder value: {sortOrder}. Value must be either asc or desc" });
             }
 
-            var stats = await _fileService.ComputeCitiesByAverageAsync(
+            var stats = await _fileService.QueryCityStatsAsync(
                 _filePath,
                 min,
                 max,
@@ -58,7 +58,7 @@ namespace IndigoLabsAssignment.Controllers
         [HttpGet("{city}")]
         public async Task<ActionResult<object>> Get(string city)
         {
-            var cityStats = await _fileService.ComputeCityStatisticsAsync(_filePath, city);
+            var cityStats = await _fileService.GetSingleCityStatsAsync(_filePath, city);
             if (cityStats == null)
                 return NotFound(new { City = city, Message = "City not found" });
 

@@ -19,10 +19,10 @@ namespace IndigoLabsAssignment.Services
             city = line.Substring(0, separatorIndex).Trim();
             string tempPart = line.Substring(separatorIndex + 1).Trim();
 
-            if (double.TryParse(tempPart, NumberStyles.Float, CultureInfo.InvariantCulture, out temperature))
-                return true;
+            if (!double.TryParse(tempPart, NumberStyles.Float, CultureInfo.InvariantCulture, out temperature))
+                return false;
 
-            return false;
+            return true;
         }
     }
 }

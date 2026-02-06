@@ -1,4 +1,4 @@
-namespace IndigoLabsAssignment.Services
+namespace IndigoLabsAssignment.Services.Interfaces
 {
     public interface ILineParser
     {

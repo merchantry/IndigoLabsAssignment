@@ -1,11 +1,11 @@
 namespace IndigoLabsAssignment.Models
 {
-    public class CityTemperatureStats
+    public readonly struct CityTemperatureStats(string city, double min, double max, double sum, int count)
     {
-        public string City { get; set; } = string.Empty;
-        public double Min { get; set; }
-        public double Max { get; set; }
-        public double AvgTemp { get; set; }
-        public int Count { get; set; }
+        public string City { get; } = city;
+        public double Min { get; } = min;
+        public double Max { get; } = max;
+        public double AvgTemp { get; } = sum / count;
+        public int Count { get; } = count;
     }
 }

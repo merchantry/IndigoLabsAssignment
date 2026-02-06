@@ -1,3 +1,5 @@
+using IndigoLabsAssignment.Services.Interfaces;
+
 namespace IndigoLabsAssignment.Services
 {
     public class FileReaderService : IFileReaderService

@@ -1,6 +1,6 @@
-namespace IndigoLabsAssignment.Services
+namespace IndigoLabsAssignment.Models
 {
-    internal class CityAggregate(double value)
+    public class CityAggregate(double value)
     {
         public double Min { get; set; } = value;
         public double Max { get; set; } = value;

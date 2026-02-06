@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddMemoryCache();
-// Register file temperature services
+
 builder.Services.AddSingleton<ILineParser, LineParser>();
 builder.Services.AddSingleton<ICityTemperatureStatsService, CityTemperatureStatsService>();
 builder.Services.AddSingleton<IFileReaderService, FileReaderService>();

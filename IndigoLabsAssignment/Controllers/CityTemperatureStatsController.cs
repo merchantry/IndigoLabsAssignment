@@ -8,7 +8,7 @@ namespace IndigoLabsAssignment.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FileCheckController(IFileTemperatureService fileService, IOptions<FileSettings> fileSettings) : ControllerBase
+    public class CityTemperatureStatsController(IFileTemperatureService fileService, IOptions<FileSettings> fileSettings) : ControllerBase
     {
         private readonly string _filePath = fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
         private readonly IFileTemperatureService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
@@ -21,7 +21,7 @@ namespace IndigoLabsAssignment.Controllers
         /// <param name="sortBy">Sort field: "city" or "avgtemp" (optional)</param>
         /// <param name="sortOrder">Sort direction: "asc" or "desc" (optional)</param>
         /// <returns>Filtered and sorted city statistics</returns>
-        [HttpGet("CityStats")]
+        [HttpGet]
         public async Task<ActionResult<object>> Get([FromQuery] double? min, [FromQuery] double? max, [FromQuery] string? sortBy, [FromQuery] string? sortOrder)
         {
             bool hasSortBy = !string.IsNullOrEmpty(sortBy);
@@ -55,7 +55,7 @@ namespace IndigoLabsAssignment.Controllers
         /// </summary>
         /// <param name="city">The name of the city</param>
         /// <returns>Temperature statistics for the specified city</returns>
-        [HttpGet("CityStats/{city}")]
+        [HttpGet("{city}")]
         public async Task<ActionResult<object>> Get(string city)
         {
             var cityStats = await _fileService.ComputeCityStatisticsAsync(_filePath, city);

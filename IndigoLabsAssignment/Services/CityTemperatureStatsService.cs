@@ -15,7 +15,7 @@ namespace IndigoLabsAssignment.Services
         public async Task<CityTemperatureStats?> GetSingleCityStatsAsync(string path, string city)
         {
 
-            var dict = await ComputeCityAggregatesAsync(path);
+            var dict = await GetCityAggregatesAsync(path);
             if (!dict.TryGetValue(city, out var agg))
                 return null;
 
@@ -48,18 +48,28 @@ namespace IndigoLabsAssignment.Services
 
         private async Task<IEnumerable<CityTemperatureStats>> ComputeAllCityStatsAsync(string path)
         {
-            var dict = await ComputeCityAggregatesAsync(path);
+            var dict = await GetCityAggregatesAsync(path);
 
             return dict.Select(KvPair => new CityTemperatureStats(KvPair.Key, KvPair.Value.Min, KvPair.Value.Max, KvPair.Value.Sum, KvPair.Value.Count));
         }
 
-        private async Task<Dictionary<string, CityAggregate>> ComputeCityAggregatesAsync(string path)
+        private async Task<Dictionary<string, CityAggregate>> GetCityAggregatesAsync(string path)
         {
 
             var fileMetaData = _fileMetaDataService.FromPath(path);
 
             if (!_cacheService.ShouldRefresh(fileMetaData))
                 return _cacheService.Get();
+
+            var cityAggregates = await GenerateCityAggregatesAsync(path);
+
+            _cacheService.Set(fileMetaData, cityAggregates);
+
+            return cityAggregates;
+        }
+
+        private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(string path)
+        {
 
             var dict = new Dictionary<string, CityAggregate>(StringComparer.OrdinalIgnoreCase);
 
@@ -80,8 +90,6 @@ namespace IndigoLabsAssignment.Services
                     aggregate.Count += 1;
                 }
             }
-
-            _cacheService.Set(fileMetaData, dict);
 
             return dict;
         }

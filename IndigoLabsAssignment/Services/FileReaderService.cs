@@ -9,11 +9,16 @@ namespace IndigoLabsAssignment.Services
             if (!File.Exists(path))
                 throw new FileNotFoundException($"File not found: {path}");
 
-            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var reader = new StreamReader(fs);
+            using var fileStream = new FileStream(
+                path,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.Read
+            );
+            using var streamReader = new StreamReader(fileStream);
 
             string? line;
-            while ((line = await reader.ReadLineAsync()) != null)
+            while ((line = await streamReader.ReadLineAsync()) != null)
             {
                 yield return line;
             }

@@ -23,12 +23,18 @@ namespace IndigoLabsAssignment.Services
 
         public async Task<CityTemperatureStats?> GetSingleCityStatsAsync(string path, string city)
         {
-            var dict = await GetCityAggregatesAsync(path);
+            var aggregates = await GetCityAggregatesAsync(path);
 
-            if (!dict.TryGetValue(city, out var agg))
+            if (!aggregates.TryGetValue(city, out var cityAggregate))
                 return null;
 
-            return new CityTemperatureStats(city, agg.Min, agg.Max, agg.Sum, agg.Count);
+            return new CityTemperatureStats(
+                city,
+                cityAggregate.Min,
+                cityAggregate.Max,
+                cityAggregate.Sum,
+                cityAggregate.Count
+            );
         }
 
         public async Task<IEnumerable<CityTemperatureStats>> QueryCityStatsAsync(
@@ -71,9 +77,9 @@ namespace IndigoLabsAssignment.Services
             string path
         )
         {
-            var dict = await GetCityAggregatesAsync(path);
+            var aggregates = await GetCityAggregatesAsync(path);
 
-            return dict.Select(KvPair => new CityTemperatureStats(
+            return aggregates.Select(KvPair => new CityTemperatureStats(
                 KvPair.Key,
                 KvPair.Value.Min,
                 KvPair.Value.Max,
@@ -100,27 +106,31 @@ namespace IndigoLabsAssignment.Services
             string path
         )
         {
-            var dict = new Dictionary<string, CityAggregate>(StringComparer.OrdinalIgnoreCase);
+            var cityAggregateDictionary = new Dictionary<string, CityAggregate>(
+                StringComparer.OrdinalIgnoreCase
+            );
 
             await foreach (var line in _fileReader.ReadLinesAsync(path))
             {
-                if (!_lineParser.TryParse(line, out string parsedCity, out double temperature))
+                if (
+                    !_lineParser.TryParse(line, out string parsedCity, out double parsedTemperature)
+                )
                     continue;
 
-                if (!dict.TryGetValue(parsedCity, out var aggregate))
+                if (!cityAggregateDictionary.TryGetValue(parsedCity, out var aggregate))
                 {
-                    dict[parsedCity] = new CityAggregate(temperature);
+                    cityAggregateDictionary[parsedCity] = new CityAggregate(parsedTemperature);
                 }
                 else
                 {
-                    aggregate.Min = Math.Min(aggregate.Min, temperature);
-                    aggregate.Max = Math.Max(aggregate.Max, temperature);
-                    aggregate.Sum += temperature;
+                    aggregate.Min = Math.Min(aggregate.Min, parsedTemperature);
+                    aggregate.Max = Math.Max(aggregate.Max, parsedTemperature);
+                    aggregate.Sum += parsedTemperature;
                     aggregate.Count += 1;
                 }
             }
 
-            return dict;
+            return cityAggregateDictionary;
         }
     }
 }

@@ -77,14 +77,14 @@ namespace IndigoLabsAssignment.Services
             string path
         )
         {
-            var aggregates = await GetCityAggregatesAsync(path);
+            var cityAggregates = await GetCityAggregatesAsync(path);
 
-            return aggregates.Select(KvPair => new CityTemperatureStats(
-                KvPair.Key,
-                KvPair.Value.Min,
-                KvPair.Value.Max,
-                KvPair.Value.Sum,
-                KvPair.Value.Count
+            return cityAggregates.Select(cityAggregatePair => new CityTemperatureStats(
+                cityAggregatePair.Key,
+                cityAggregatePair.Value.Min,
+                cityAggregatePair.Value.Max,
+                cityAggregatePair.Value.Sum,
+                cityAggregatePair.Value.Count
             ));
         }
 

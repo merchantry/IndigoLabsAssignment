@@ -9,12 +9,13 @@ namespace IndigoLabsAssignment.Controllers
     [ApiController]
     [Route("[controller]")]
     public class CityTemperatureStatsController(
-        ICityTemperatureStatsService fileService,
+        ICityTemperatureStatsService cityTemperatureStatsService,
         IOptions<FileSettings> fileSettings
     ) : ControllerBase
     {
-        private readonly ICityTemperatureStatsService _fileService =
-            fileService ?? throw new ArgumentNullException(nameof(fileService));
+        private readonly ICityTemperatureStatsService _cityTemperatureStatsService =
+            cityTemperatureStatsService
+            ?? throw new ArgumentNullException(nameof(cityTemperatureStatsService));
 
         private readonly string _filePath =
             fileSettings?.Value?.Path ?? throw new ArgumentNullException(nameof(fileSettings));
@@ -61,7 +62,7 @@ namespace IndigoLabsAssignment.Controllers
                 );
             }
 
-            var stats = await _fileService.QueryCityStatsAsync(
+            var cityTemperatureStats = await _cityTemperatureStatsService.QueryCityStatsAsync(
                 _filePath,
                 min,
                 max,
@@ -79,7 +80,7 @@ namespace IndigoLabsAssignment.Controllers
                         sortBy,
                         sortOrder,
                     },
-                    Results = stats,
+                    Results = cityTemperatureStats,
                 }
             );
         }
@@ -92,7 +93,10 @@ namespace IndigoLabsAssignment.Controllers
         [HttpGet("{city}")]
         public async Task<ActionResult<object>> Get(string city)
         {
-            var cityStats = await _fileService.GetSingleCityStatsAsync(_filePath, city);
+            var cityStats = await _cityTemperatureStatsService.GetSingleCityStatsAsync(
+                _filePath,
+                city
+            );
             if (cityStats == null)
                 return NotFound(new { City = city, Message = "City not found" });
 

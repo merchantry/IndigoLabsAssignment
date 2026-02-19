@@ -97,8 +97,7 @@ namespace IndigoLabsAssignment.Services
             if (!_cacheService.ShouldRefresh(fileMetaData))
                 return _cacheService.Get();
 
-            await _cacheSemaphore.WaitAsync().ConfigureAwait(false);
-            try
+            return await _cacheSemaphore.ExecuteWithLockAsync(async () =>
             {
                 if (!_cacheService.ShouldRefresh(fileMetaData))
                     return _cacheService.Get();
@@ -108,11 +107,7 @@ namespace IndigoLabsAssignment.Services
                 _cacheService.Set(fileMetaData, cityAggregates);
 
                 return cityAggregates;
-            }
-            finally
-            {
-                _cacheSemaphore.Release();
-            }
+            });
         }
 
         private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(

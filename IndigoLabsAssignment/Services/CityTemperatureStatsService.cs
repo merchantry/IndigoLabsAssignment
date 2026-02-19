@@ -12,6 +12,8 @@ namespace IndigoLabsAssignment.Services
         IFileMetaDataService fileMetaDataService
     ) : ICityTemperatureStatsService
     {
+        private static readonly SemaphoreSlim _cacheSemaphore = new(1, 1);
+
         private readonly ILineParser _lineParser =
             lineParser ?? throw new ArgumentNullException(nameof(lineParser));
         private readonly IFileReaderService _fileReader =
@@ -95,11 +97,22 @@ namespace IndigoLabsAssignment.Services
             if (!_cacheService.ShouldRefresh(fileMetaData))
                 return _cacheService.Get();
 
-            var cityAggregates = await GenerateCityAggregatesAsync(path);
+            await _cacheSemaphore.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                if (!_cacheService.ShouldRefresh(fileMetaData))
+                    return _cacheService.Get();
 
-            _cacheService.Set(fileMetaData, cityAggregates);
+                var cityAggregates = await GenerateCityAggregatesAsync(path).ConfigureAwait(false);
 
-            return cityAggregates;
+                _cacheService.Set(fileMetaData, cityAggregates);
+
+                return cityAggregates;
+            }
+            finally
+            {
+                _cacheSemaphore.Release();
+            }
         }
 
         private async Task<Dictionary<string, CityAggregate>> GenerateCityAggregatesAsync(
